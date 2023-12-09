@@ -1,4 +1,3 @@
-<?php
 error_reporting(0);
 session_start();
 $ress = "\033[0;32m";
