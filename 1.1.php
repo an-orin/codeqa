@@ -1,326 +1,1106 @@
-<?php
+error_reporting(0);
 session_start();
-date_default_timezone_set('Asia/Ho_Chi_Minh');
-@system('clear');
-
-
+$ress = "\033[0;32m";
+$res = "\033[0;33m";
+$red = "\033[0;31m";
+$green = "\033[0;37m";
+$yellow = "\033[0;33m";
+$white = "\033[1;37m";
 $xnhac = "\033[1;96m";
-$luc = "\033[1;92m";
-$hong = "\033[1;95m";
-$do = "\033[1;31m";
-$vang = "\033[1;93m";
-$trang = "\033[1;97m";
-$logo = logo_kov();
-
-/***[ USERAGENT ]***/
-$_SESSION['useragent'] = 'Mozilla/5.0 (Linux; Android 10; CPH1819) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36';
-/***[ Delay ]***/
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'LIN') {
-        $_SESSION['load'] = 2000;
-        $_SESSION['delay'] = 150000;
-} else {
-        $_SESSION['load'] = 0;
-        $_SESSION['delay'] = 100000;
-}
-
-if(!$_SESSION['version']) {
-        $_SESSION['version'] = "3.9";
-}
-$job = 8;
-
-
-$tool = $do."[" . $trang . "=.=" . $do . "] ".$trang."=> ";
-$tool1= $do."[" . $trang . "=.=" . $do . "] ".$trang."=> ";
-
-echo $banner1;
-
-while (true){            
-    system("clear");
-    echo $logo."\n";
-    
-    if (file_exists("configttc.txt")){
-            if(file_get_contents("configttc.txt") == ''){
-                    unlink("configttc.txt"); continue;
-            }
-            $_SESSION['token'] = fread(fopen("configttc.txt", "r"), filesize("configttc.txt"));
-            $login = logintoken();
-            if($login == false){
-                    unlink("configttc.txt"); continue;
-            }
-
-            echo $tool1.$luc."Nhập ".$vang."[".$trang."1".$vang."] ".$luc."Giữ Lại Tài Khoản ".$vang.$_SESSION['user']."\n";
-            echo $tool1.$luc."Nhập ".$vang."[".$trang."2".$vang."] ".$luc."Nhập Access_Token TTC Mới \n";
-            echo $tool1.$luc."Nhập ".$trang."===>: $vang";
-            $chon_tk = trim(fgets(STDIN));
-        if ($chon_tk == "2") {
-            unlink("configttc.txt");
-            loadyt();
-            } else if ($chon_tk == "1") {
-        } else {
-                    echo $do." Lựa chọn không xác định !!!\n";
-                    loadyt(); continue;
-        }
-    }
-    if(!file_exists("configttc.txt")){
-        echo $luc."Lấy Access_Token TTC Tại: ".$trang."https://tuongtaccheo.com/api/ \n";
-        echo $tool1.$luc."Nhập Access_Token TTC: $vang";
-                $tokenacc = trim(fgets(STDIN));
-        fwrite(fopen("configttc.txt", "w+"), $tokenacc);
-    }
-    $_SESSION['token'] = fread(fopen("configttc.txt", "r"), filesize("configttc.txt"));
-    $login = logintoken();
-    if($login == true){
-            echo $xnhac." Đăng Nhập Thành Công.       \n";
-                break;
-        } else {
-                //echo $do." Access_Token TTC Sai \n";
-                unlink("configttc.txt");
-                loadyt();
-        }
-}
-//youtube
-
-
-while (true){            
-    system("clear");
-    echo $logo."\n";
-    
-    if (file_exists("configytb.txt")){
-            if(file_get_contents("configytb.txt") == ''){
-                    unlink("configytb.txt"); continue;
-            }
-            echo $tool1.$luc."Nhập ".$vang."[".$trang."1".$vang."] ".$luc."Chạy cookie Youtube cũ\n";
-            echo $tool1.$luc."Nhập ".$vang."[".$trang."2".$vang."] ".$luc."Nhập Cookie Youtube Mới \n";
-            echo $tool1.$luc."Nhập ".$trang."===>: $vang";
-            $chon_tk = trim(fgets(STDIN));
-        if ($chon_tk == "2") {
-            unlink("configytb.txt");
-            loadyt();
-            } else if ($chon_tk == "1") {
-            break;
-        } else {
-                    echo $do." Lựa chọn không xác định !!!\n";
-                    loadyt(); continue;
-        }
-    }
-    if(!file_exists("configytb.txt")){
-        //echo $luc."Lấy Access_Token TTC Tại: ".$trang."https://tuongtaccheo.com/api/ \n";
-        echo $tool1.$luc."Nhập Cookie Youtube: $vang";
-        $cookie = trim(fgets(STDIN));
-        echo $tool1.$luc."Nhập Authorization Youtube: $vang";
-        $authorization = trim(fgets(STDIN));
-
-        fwrite(fopen("configytb.txt", "w+"), $cookie."|".$authorization);
-        break;
-    }
-}
-
-    $content_ck = fread(fopen("configytb.txt", "r"), filesize("configytb.txt"));
-    $cookie = explode("|",$content_ck)[0];
-    $authorization = explode("|",$content_ck)[1];
-
-
-
-    @system('clear');
-    echo $logo."\n";
-
-    echo $tool1.$luc."Vào cấu hình tương tác chéo cấu hình acc muốn chạy rồi ấn enter $vang";
-    trim(fgets(STDIN));
-
-
-@system('clear');
-$xu = coin($tool1);
-echo $logo."\n";
-echo $tool1.$luc."Tool Auto Subscribe TTC Youtube\n";
-echo $tool1.$luc."Bản quyền Vựa Buff\n";
-loadyt();
-echo $tool1.$luc."Tên Tài Khoản: ".$vang.$_SESSION['user']."\n";
-echo $tool1.$luc."Xu hiện tại: ".$vang.$xu."\n";
-loadyt();
-$dem = 0;
-$stt = 0;
-        while (true) {
-        echo $tool1.$luc."Nhập Delay: $vang";
-                $delay = trim(fgets(STDIN));
-        if($delay == '' || !is_numeric($delay)){
-            echo $do." Delay Không Xác Định  \n";
-        } if($delay < 15) {
-            echo $do." Delay Tối Thiểu 15s  \n";
-        } else {
-            break;
-        }
-    }
-    loadyt();
-    while (true){
-            for($i = 0; $i < 3; $i++){
-                $listsub = get_yt("/subcheo");
-                // print_r($listsub);
-                if($listsub == ''){
-                    $login = logintoken();
-                    if($login == true){
-                        echo $luc." COOKIE TUONGTACCHEO DIE, ĐĂNG NHẬP LẠI THÀNH CÔNG \r";
-                        sleep(2); continue;
-                    } else {
-                            echo $luc." COOKIE TUONGTACCHEO DIE, ĐĂNG NHẬP LẠI THẤT BẠI \n"; die;
-                    }
-                    }
-                    echo $luc." Đã Tìm Thấy ".$vang.count($listsub).$luc." Nhiệm Vụ Follow     \r";
-                    if(count($listsub) !==  0){ break; }
-                    sleep(2);
-            }
-            if(count($listsub) < $job){
-                        echo $do."\n Nhiệm Vụ Quá Ít, Không Thể Nhận Xu Khi Làm          \n"; sleep (2);
-                        loadyt(); break;
-                }
-                $list = '';
-                $stt = $job*(floor(count($listsub)/$job));
-                //echo "\n".$stt."\n";
-            for($lap = 0; $lap < $stt; $lap++){
-                $id = $listsub[$lap]["idpost"];
-                $link = $listsub[$lap]["link"];
-                //echo $link;
-                if(isset($link)){
-                    if(curl_subscribe_youtube($link,$cookie,$authorization) == 1){
-                        $xu = coin($tool1);
-                        $dem++;
-                        $kl = "\033[1;31m[\033[1;33m".$dem."\033[1;31m]\033[1;92m | \033[1;36m".date("H:i:s")."\033[1;92m | \033[1;93m"."FOLLOW\033[1;92m ✔ \033[1;37m".$link." \n";
-                                for($i = 0; $i < strlen($kl); $i++){echo $kl[$i];usleep(1500);}
-                                delay($delay);
-                        $list = $list.$id.",";
-                        if($dem % $job == 0){
-                                $list = substr($list, 0, (strlen($list) - 1));
-                                $nhantien = nhantien($list, "/subcheo");
-                                if($nhantien["mess"]){
-                                        $xujob = $nhantien["sodu"];
-                                        $xu = $xu + $xujob;
-                                    $kl = "\e[1;32m⌠\e[1;33mTTC YOUTUBE\e[1;32m⌡\e[1;35m✔\e[1;36m✔\e[1;92m✔\033[1;36m Nhận Thành Công ".($xujob/2000)." Nhiệm Vụ\033[1;92m ✔ \033[1;92m+$xujob Xu \033[1;92m✔\033[1;32m $xu \n";
-                                                for($i = 0; $i < strlen($kl); $i++){echo $kl[$i];usleep(500);}
-                                                echo "\033[1;33m".str_repeat('- ', 35)."\n";
-                                } else {
-                                        sleep (1);
-                                        echo $do.$nhantien["error"]."          \n";
-                                }
-                                $list = '';
-                        }
-                    }
-                    
-                }
-            }
-        }
-
-function curl_subscribe_youtube($link,$cookie,$authorization)
-{
-    $data = file_get_contents($link);
-    $link = "http://m.youtube.com/channel/".explode('"',explode('http://www.youtube.com/channel/',$data)[1])[0];
-    //echo $link;
-    $data = sub_yt($link, $cookie, $authorization);
-    return $data;
-}
-function logo_kov(){
-$xam = "\033[1;90m";
-$xnhac = "\033[1;96m";
+$den = "\033[1;90m";
 $do = "\033[1;91m";
 $luc = "\033[1;92m";
 $vang = "\033[1;93m";
 $xduong = "\033[1;94m";
 $hong = "\033[1;95m";
 $trang = "\033[1;97m";
-$logo = "
-\033[1;34m         █████╗  ███╗   ██╗     ██████╗ ██████╗ ██╗███╗   ██╗
-        \033[1;37m ██╔══██╗████╗  ██║    ██╔═══██╗██╔══██╗██║████╗  ██║
-        \033[1;34m ███████║██╔██╗ ██║    ██║   ██║██████╔╝██║██╔██╗ ██║
-        \033[1;37m ██╔══██║██║╚██╗██║    ██║   ██║██╔══██╗██║██║╚██╗██║
-        \033[1;34m ██║  ██║██║ ╚████║    ╚██████╔╝██║  ██║██║██║ ╚████║
-        \033[1;37m ╚═╝  ╚═╝╚═╝  ╚═══╝     ╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
+$do="\033[1;91m";
+$maufulldo= "\e[1;47;31m";
+$res="\033[0m";
+$red="\e[1;31m";
+$pink="\e[1;35m";
+$green="\e[1;32m";
+$yellow="\e[1;33m";
+$y2="\033[0;33m";
+$cyan= "\e[1;36m";
+$blue="\e[1;34m";
+$ngreen="\033[42m";
+$ngblack="\033[40m";
+$nen="\033[1;47;1;34m";
+$cuongdz = $do."[".$trang ."=.=".$do."] ".$trang."=> ";
+$thanhngang = $do."────────────────────────────────────────────────────────────\n";
+/***[ Banner ]***/
+$banner = "
+\033[1;34m  █████╗ ███╗   ██╗     ██████╗ ██████╗ ██╗███╗   ██╗
+\033[1;37m ██╔══██╗████╗  ██║    ██╔═══██╗██╔══██╗██║████╗  ██║
+\033[1;34m ███████║██╔██╗ ██║    ██║   ██║██████╔╝██║██╔██╗ ██║
+\033[1;37m ██╔══██║██║╚██╗██║    ██║   ██║██╔══██╗██║██║╚██╗██║
+\033[1;34m ██║  ██║██║ ╚████║    ╚██████╔╝██║  ██║██║██║ ╚████║
+\033[1;37m ╚═╝  ╚═╝╚═╝  ╚═══╝     ╚═════╝ ╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
 \033[1;31m────────────────────────────────────────────────────────────
-\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;33mTOOL TTC YOUTUBE \033[1;37m(\033[1;33mAuto\033[1;37m)
-\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;35mADMIN: \033[1;36mAN ORIN
-\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;36mFB: \033[1;31manorintool
-\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;32mBOX SUPPORT: \033[1;37mhttps://zalo.me/g/dpfbxq529
-\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;34mYOUTUBE: \033[1;37mhttps://youtube.com/@AnOrinTool403
-\033[1;31m────────────────────────────────────────────────────────────";
-return $logo;
+\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;33mTOOL TTC COOKIE \033[1;33m(VIP FIX DIE)
+\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;35mADMIN: \033[1;36mAN ORIN
+\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;36mFB: \033[1;31manorintool970
+\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mBOX SUPPORT: \033[1;37mhttps://zalo.me/g/dpfbxq529
+\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;34mYOUTUBE: \033[1;37mhttps://youtube.com/@AnOrinTool970
+\033[1;31m────────────────────────────────────────────────────────────\n";
+
+date_default_timezone_set("Asia/Ho_Chi_Minh");
+$useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36";
+@system("clear");
+/***[ Clear + Thông Số Admin ]***/
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'LIN') { 
+    @system('clear'); 
+} else { 
+    @system('cls'); 
 }
-function logintoken(){
-        $data = 'access_token='.$_SESSION['token'];
-        $head[] = 'Content-type: application/x-www-form-urlencoded';
-    $ch   = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => 'https://tuongtaccheo.com/logintoken.php',
-        CURLOPT_FOLLOWLOCATION => TRUE,
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_POST => 1,
-        CURLOPT_POSTFIELDS => $data,
-        CURLOPT_SSL_VERIFYPEER => 0,
-        CURLOPT_HTTPHEADER => $head,
-        CURLOPT_COOKIEJAR => "TTC.txt",
-                CURLOPT_COOKIEFILE => "TTC.txt",
-        CURLOPT_USERAGENT => $_SESSION['useragent'],
-        CURLOPT_ENCODING => TRUE
-    ));
-    $login = json_decode(curl_exec($ch));
-    if($login->status == 'success'){
-            $xu = $login->data->sodu;
-            $_SESSION['user'] = $login->data->user;
-            $js = fopen($_SESSION['user'].".txt", "a+");
-            file_put_contents($_SESSION['user'].".txt", file_get_contents("TTC.txt"));
-            unlink("TTC.txt");
-            return true;
-    } else if($login->status == 'fail'){
-        echo "\033[1;31m ".$login->mess."\n";
-        sleep(1);
-        return false;
-    } else {
-        echo "\033[1;31m Kiểm Tra VPN (không đc sử dụng ip nước ngoài)\n";
-            return false;
+for($i = 0; $i < strlen($banner); $i++){echo $banner[$i];usleep(500);}
+$_SESSION['fck'] = file_exists("ttc.txt");
+if ($_SESSION['fck'] == '1'){
+  unlink("ttc.txt");
+}
+$_SESSION['check'] = file_exists("logttc.txt");
+if ($_SESSION['check'] =='1'){
+luachon1:
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$luc."Bạn Đã Đăng Nhập Trước Đó! Bấm $yellow Enter $green Để Tiếp Tục!\n";
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$luc."Nhập $do No $luc Để Đăng nhập lại: $trang";
+$_SESSION['nhap'] = trim(fgets(STDIN));
+if ($_SESSION['nhap'] !='no' and $_SESSION['nhap'] != 'No' and $_SESSION['nhap'] !=''){
+echo $red."Sai Định Dạng\n";
+GOTO luachon1;
+}
+if ($_SESSION['nhap'] =='no' or $_SESSION['nhap'] =='No'){
+$my = fopen("logttc.txt", "w+");
+echo $cuongdz.$luc."Nhập TTC_Access_token TTC: $vang";
+$TTC_Access_token =trim(fgets(STDIN));
+
+$arr = array("TTC_Access_token"=> $TTC_Access_token);
+fwrite($my,json_encode($arr));
+    $my = file("logttc.txt");
+$bb = file_get_contents('logttc.txt');
+$cc =json_decode($bb);
+$_SESSION['TTC_Access_token']= $cc->{"TTC_Access_token"};
+}
+if ($_SESSION['nhap'] == ''){
+$bb = file_get_contents("logttc.txt");
+$cc =json_decode($bb);
+$_SESSION['TTC_Access_token']= $cc->{"TTC_Access_token"};
+}
+} else {
+luachon2:
+$my = fopen("logttc.txt", "w+");
+echo $cuongdz.$luc."Nhập TTC_Access_token TTC: $vang";
+$TTC_Access_token =trim(fgets(STDIN));
+$arr = array("TTC_Access_token"=> $TTC_Access_token);
+fwrite($my,json_encode($arr));
+$_SESSION['TTC_Access_token'] = $TTC_Access_token;
+}
+$TTC_Access_token = $_SESSION['TTC_Access_token'];
+$source = getcookiettc($TTC_Access_token,$useragent);
+$sou= json_decode($source,true);
+if ($sou['status'] == 'success' ){
+  echo $cuongdz.$luc."Đăng Nhập Thành Công\n";
+  $user = $sou['data']['user'];
+  $xu = $sou['data']['sodu'];
+}else{
+	echo $red.$sou['mess'];
+	GOTO luachon2; 
+}
+do {
+$khocookie = [];
+echo $thanhngang;
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$luc."Nhập Cookie Facebook.\033[1;33mMuốn Dừng Nhập Thì Bấm Enter\n";
+for($a = 1; $a < 999999;$a++){
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$luc."Nhập Cookie Thứ $a: $vang";
+$nhapck = (string)trim(fgets(STDIN));
+if($nhapck == ''){break;}
+
+array_push($khocookie,$nhapck);
+}
+            
+$demcki=count($khocookie);
+            
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$luc."Bạn Đã Nhập ".$vang.$demcki." ".$luc."Cookie Facebook\n";
+sleep(1);
+} while (count($khocookie)==0);
+
+//$thongtin
+
+system('clear');
+echo $banner;
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mĐang Chạy Tool \033[1;37mTTC COOKIE\n";
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> ".$yellow."Số Nick Chạy:$green $demcki\n";
+$xu = getxu();
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> ".$cyan."Xu Hiện Tại:$yellow $xu\n";
+echo"\033[1;31m────────────────────────────────────────────────────────────\n";
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mNhiệm Vụ Like (y/n) : \033[1;33m";
+$chon1=trim(fgets(STDIN));
+  if ($chon1 == 'y' ){
+    echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mDelay Like : \033[1;33m";
+    $delaylike = trim(fgets(STDIN));
+  }
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mNhiệm Vụ Follow (y/n) : \033[1;33m";
+$chon2=trim(fgets(STDIN));
+  if ($chon2 == 'y' ){
+    echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mDelay Follow : \033[1;33m";
+    $delayfl = trim(fgets(STDIN));
+  }
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mNhiệm Vụ Comment (y/n) : \033[1;33m";
+$chon3=trim(fgets(STDIN));
+  if ($chon3 == 'y' ){
+    echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mDelay Comment : \033[1;33m";
+    $delaycmt = trim(fgets(STDIN));
+  }
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mNhiệm Vụ Share (y/n) : \033[1;33m";
+$chon4=trim(fgets(STDIN));
+  if ($chon4 == 'y' ){
+    echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mDelay Share : \033[1;33m";
+    $delayshare = trim(fgets(STDIN));
+  }
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mNhiệm Vụ Cảm Xúc (y/n) : \033[1;33m";
+$chon5=trim(fgets(STDIN));
+  if ($chon5 == 'y' ){
+    echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mDelay Cảm Xúc : \033[1;33m";
+    $delaycx = trim(fgets(STDIN));
+  }
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mNhiệm Vụ Like Page (y/n) : \033[1;33m";
+$chon7=trim(fgets(STDIN));
+  if ($chon7 == 'y' ){
+    echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mDelay Page : \033[1;33m";
+    $delaypage = trim(fgets(STDIN));
+  }
+echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mNhiệm Vụ Like CMT (y/n) : \033[1;33m";
+$chon6=trim(fgets(STDIN));
+  if ($chon6 == 'y' ){
+    echo"\033[1;31m[\033[1;37m=.=\033[1;31m] \033[1;37m=> \033[1;32mDelay Like CMT : \033[1;33m";
+    $delayrecmt = trim(fgets(STDIN));
+  }
+  echo $thanhngang;
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Sau Bao Nhiêu Nhiệm Vụ Thì Dừng Chống Block: $vang";
+$xxxxx = trim(fgets(STDIN));
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Sau ".$vang.$xxxxx.$luc." Nhiệm Vụ Nghỉ Ngơi Bao Nhiêu Giây: $vang";
+$delaybl = trim(fgets(STDIN));
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Chuyển Nick Sau Bao Nhiêu Nhiệm Vụ: $vang";
+$doinick = trim(fgets(STDIN));
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Chạy Bao Nhiêu Nhiệm Vụ Rồi Dừng Tool: $vang";
+$dungtool = trim(fgets(STDIN));
+while(true){
+  if(count($khocookie) == 0){
+echo $cuongdz.$cyan."Nhập Cookie Facebook.\033[1;33mMuốn Dừng Nhập Thì Bấm Enter\n";
+for($a = 1; $a < 999999;$a++){
+echo $cuongdz.$cyan."Nhập Cookie Thứ $a: $vang";
+$nhapck = (string)trim(fgets(STDIN));
+if($nhapck == ''){break;}
+array_push($khocookie,$nhapck);
+    }
+$demcki=count($khocookie);
+echo $cuongdz.$cyan."Bạn Đã Nhập ".$vang.$demcki." ".$luc."Cookie Facebook\n";
+sleep(1);
+  }
+  $themtk = 0;
+  for($xz=0;$xz<count($khocookie);$xz++){
+ if ( $themck == 1){ break; }
+ $cookie = $khocookie[$xz];
+ $access_token = gettoken($cookie,$useragent);
+if ($access_token == 'die') {
+    echo "\r";
+    echo "                                                      \r";
+    echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$red."Cookie Die!!!\n";
+    array_splice($khocookie,$xz,1);
+    continue;
+}
+$tenfb = json_decode(get_request('https://graph.facebook.com/me/?access_token='.$access_token,$cookie))-> {'name'};
+$idfb = json_decode(get_request('https://graph.facebook.com/me/?access_token='.$access_token,$cookie))-> {'id'};
+$h = datnick($idfb,$useragent);
+if ($h == '1'){
+echo $thanhngang;
+echo "\033[1;32mĐang Cấu Hình: ".$yellow.$tenfb." ID: $trang".$idfb."".$res."\n";
+echo $thanhngang;
+} else {
+  echo $thanhngang;
+    echo $red."Cấu Hình Thất Bại Có Thể Do Bạn Chưa Thêm $tenfb Vào Cấu Hình\n";
+    echo $thanhngang;
+    exit;
+}
+$spam = 0;
+$xu = $xuhientai;
+while (true) {
+    if ($spam == 1) {
+        break;
+    }
+    //listlike
+    if (strpos($chon1, 'y') !== false) {
+        for ($i = 0; $i < 5; $i++) {
+            $listlike = getlike($useragent);
+            if($listlike == ''){
+          echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$do."Internet Không Ổn Định\r";
+          while($listlike==''){
+            $listlike = getlike($useragent);
+          }}
+            if (count($listlike) > 0) {
+                break;
+            }}
+        if (count($listlike) == 0) {
+          $rd = rand(1, 7);
+echo "\033[1;3".$rd."m Đang tạm thời hết nhiệm vụ like       \r"; 
+        }
+        if(isset($listlike['error'])){
+			echo "Đi làm 10 nhiệm vụ like page và theo dõi rồi quay lại làm tiếp like post      \r";
+			$chon1 = 'n';
+			break;
+		}  
+    }
+    //listfollow
+    if (strpos($chon2, 'y') !== false) {
+        for ($i = 1; $i < 5; $i++) {
+            $listsub = getnv('sub',$useragent);
+            if($listsub == ''){
+          echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$do."Internet không ổn định\r";
+          while($listsub==''){
+            $listsub = getnv('sub',$useragent);
+          }}
+            if (count($listsub) > 0) {
+                break;
+            }
+        }
+      if (count($listsub) == 0) {
+          $rd = rand(1, 7);
+echo "\033[1;3".$rd."m Đang tạm thời hết nhiệm vụ Follow      \r"; 
+        }
+    }
+   
+    //listcmt
+    if (strpos($chon3, 'y') !== false) {
+        for ($i = 1; $i < 5; $i++) {
+            $listcmt = getnv('cmt',$useragent);
+            if($listcmt == ''){
+          echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$do."Internet không ổn định\r";
+          while($listcmt==''){
+            $listcmt = getnv('cmt',$useragent);
+          }}
+            if (count($listcmt) > 0) {
+                break;
+            }}
+        if (count($listcmt) == 0) {
+          $rd = rand(1, 7);
+echo "\033[1;3".$rd."m Đang tạm thời hết nhiệm vụ CMT        \r"; 
+        }
+    }
+    //share
+    if (strpos($chon4, 'y') !== false) {
+        for ($i = 1; $i < 5; $i++) {
+            $listshare = getnv('share',$useragent);
+            if($listshare == ''){
+          echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$do."Internet không ổn Định\r";
+          while($listshare==''){
+            $listshare = getnv('share',$useragent);
+          }}
+            if (count($listshare) > 0) {
+                break;
+            }}
+        if (count($listshare) == 0) {
+          $rd = rand(1, 7);
+echo "\033[1;3".$rd."m Đang tạm thời hết nhiệm vụ Share       \r"; 
+        }
+    }
+    //cx
+    if (strpos($chon5, 'y') !== false) {
+        for ($i = 1; $i < 5; $i++) {
+            $listcx = getnv('camxuc',$useragent);
+            if($listcx == ''){
+          echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$do."Internet không ổn định\r";
+          while($listcx==''){
+            $listcx = getnv('camxuc',$useragent);
+          }}
+            if (count($listcx) > 0) {
+                break;
+            }}
+        if (count($listcx) == 0) {
+          $rd = rand(1, 7);
+echo "\033[1;3".$rd."m Đang tạm thời hết nhiệm vụ cảm xúc     \r"; 
+        }
+    }
+    //cxcmt
+    if (strpos($chon6, 'y') !== false) {
+        for ($i = 1; $i < 5; $i++) {
+            $listlikecmt = getnvcxcmt($useragent);
+            if($listlikecmt == ''){
+          echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$do."Internet không ổn định\r";
+          while($listlikecmt==''){
+            $listlikecmt = getnvcxcmt($useragent);
+          }}
+            if (count($listlikecmt) > 0) {
+                break;
+            }}
+        if (count($listlikecmt) == 0) {
+          $rd = rand(1, 7);
+echo "\033[1;3".$rd."m Đang tạm thời hết nhiệm vụ cx cmt     \r"; 
+        }  
+    }
+    //page
+    if (strpos($chon7, 'y') !== false) {
+        for ($i = 1; $i < 5; $i++) {
+            $listpage = getnv('likepage',$useragent);
+            if($listpage == ''){
+          echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$do."Internet Không Ổn Định\r";
+          while($listpage==''){
+            $listpage = getnv('likepage',$useragent);
+          }}
+            if (count($listpage) > 0) {
+                break;
+            }}
+        if (count($listpage) == 0) {
+          $rd = rand(1, 7);
+echo "\033[1;3".$rd."m Đang tạm thời hết nhiệm vụ like page      \r"; 
+        }
+          
+    }
+    for ($lap = 0; $lap < 20; $lap++) {
+        // like
+      
+        if ($listlike != NULL) {
+            $idlike = $listlike[$lap]["idpost"];
+            if ($idlike != '') {
+                $g = like($access_token, $idlike, $cookie);
+				//var_dump( $g);
+if ($dem % 25 == 0){
+  $xu = getxu();
+}
+          if ($g -> {'error'} -> {'code'} == 190) {
+           
+                  echo "\r";
+       echo "                                                      \r";
+                    echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$red."Cookie Die\n";
+                    array_splice($khocookie,$xz,1);
+                    $spam = 1; break;
+
+                }
+                if ($g -> {'error'} -> {'code'} == 368) {
+echo "\r";
+echo "                                                      \r";
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> \033[1;91mĐợi 5s Để Check Block Ảo Nhé\r";
+sleep(5);
+              $testbl = like($access_token,'10103832396388711', $cookie);
+              if ($testbl -> {'error'} -> {'code'} == 368) {
+                  echo "\r";
+       echo "                                                      \r";
+                    echo $do."[".$trang ."=.=".$do."] ".$trang."=> \033[1;91m".$g-> {'error'}-> {'message'};
+                    echo "\n";
+                    array_splice($khocookie,$xz,1);
+                    $spam = 1;
+                    break;
+                }}
+                            $nhanlike = nhantienlike($idlike,$useragent);
+                $s= $nhanlike[("mess")];
+          if (strpos($s, 'Thành công') !== false) {
+                    $xu = $xu+400;
+                    $xujob = 400;
+                    $dem++;
+                    
+                    hoanthanh($dem, '  LIKE  ', $idlike, $xujob, $xu);
+                    if ( $dem >= $dungtool ){
+	$dungtool = 999999;
+	$xu = getxu();
+  echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Chạy Tool Hoàn Thành Tổng Xu: ".$vang.$xu."\n";
+    exit;
+ }
+                    if($dem % $doinick == 0){
+                      if (count($khocookie)>1){
+                      $spam = 1; break;
+                      }
+                    }
+                    if($dem % $xxxxx == 0){
+                      delay2($delaybl);
+                    }
+                    
+                       
+                    delay($delaylike);
+                }
+            }}
+        //follow
+        if ($listsub != NULL) {
+            $idsub = $listsub[$lap]["idpost"];
+            if ($idsub != '') {
+                $g = follow($idsub, $cookie);
+				//var_dump( $g);
+if ($dem % 25 == 0){
+  $xu = getxu();
+}
+// if (gettoken($cookie,$useragent) == 'die') {
+           
+                  // echo "\r";
+       // echo "                                                      \r";
+                    // echo $white."❥ ".$red."Cookie Die\n";
+                    // array_splice($khocookie,$xz,1);
+                    // $spam = 1; break;
+
+                // }
+                // if ($g -> {'error'} -> {'code'} == 368) {
+// echo "\r";
+// echo "                                                      \r";
+// echo $white."❥ \033[1;91mĐợi 10s Để Check Block Ảo Nhé\r";
+// sleep(10);
+              // $testbl = follow($access_token,'4', $cookie);
+              // if ($testbl -> {'error'} -> {'code'} == 368) {
+                  // echo "\r";
+       // echo "                                                      \r";
+                    // echo $white."❥ \033[1;91m".$g-> {'error'}-> {'message'};
+                    // echo "\n";
+                    // array_splice($khocookie,$xz,1);
+                    // $spam = 1;
+                    // break;
+                // }}
+                $nhansub = traluong('sub',$idsub);
+                $s= $nhansub[("mess")];
+          if (strpos($s, 'Thành công') !== false) {
+                    $xu = $xu+600;
+                    $xujob = 600;
+                    $dem++;
+                    hoanthanh($dem, ' FOLLOW ', $idsub, $xujob, $xu);
+                    if ( $dem >= $dungtool ){
+    
+	$dungtool = 999999;
+	$xu = getxu();
+  echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Chạy Tool Hoàn Thành Tổng Xu: ".$vang.$xu."\n";
+  exit;
+ }
+                    if($dem % $doinick == 0){
+                      if (count($khocookie)>1){
+                      $spam = 1; break;
+                      }
+                    }
+                    if($dem % $xxxxx == 0){
+                      delay2($delaybl);
+                    }
+                    
+                      
+                    delay($delayfl);
+                }
+            }}
+      
+  //share
+            if ($listshare != NULL) {
+                $id = $listshare[$lap]["idpost"];
+                if ($id != '') {
+                    $g = share($access_token, $id,$cookie);
+if ($dem % 25 == 0){
+  $xu = getxu();
+}
+          if ($g -> {'error'} -> {'code'} == 190) {
+            if(json_decode(get_request('https://graph.facebook.com/me/?access_token='.$access_token,$cookie))->{'id'}){}else{
+                  echo "\r";
+       echo "                                                      \r";
+                    echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$red."Cookie Die\n";
+                    array_splice($khocookie,$xz,1);
+                    $spam = 1; break;
+              }
+                }
+                if ($g -> {'error'} -> {'code'} == 368) {
+echo "\r";
+echo "                                                      \r";
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> \033[1;91mĐợi 10s Để Check Block Ảo Nhé\r";
+sleep(10);
+              $testbl = share($access_token,'10103832396388711',$cookie);
+              if ($testbl -> {'error'} -> {'code'} == 368) {
+                  echo "\r";
+       echo "                                                      \r";
+                    echo $do."[".$trang ."=.=".$do."] ".$trang."=> \033[1;91m".$g-> {'error'}-> {'message'};
+                    echo "\n";
+                    array_splice($khocookie,$xz,1);
+                    $spam = 1;
+                    break;
+                }}
+            $nhanshare = traluong('share',$id);
+          $s= $nhanshare[("mess")];
+          if (strpos($s, 'Thành công') !== false) {
+                    $xu = $xu+600;
+                            $xujob = 600;
+                            $dem++;
+                            hoanthanh($dem, ' SHARES ', $id, $xujob, $xu);
+                            if ( $dem >= $dungtool ){
+	$dungtool = 999999;
+	$xu = getxu();
+    echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Chạy Tool Hoàn Thành Tổng Xu: ".$vang.$xu."\n";
+    exit;
+ }
+                            if($dem % $doinick == 0){
+                      if (count($khocookie)>1){       
+                      $spam = 1; break;
+                      }
+                            }
+                            if($dem % $xxxxx == 0){
+                      delay2($delaybl);
+                    }
+                      
+                    delay($delayshare);
+                }
+                }}
+          //cảm xúc
+        if ($listcx != NULL) {
+            $idcx = $listcx[$lap]["idpost"];
+            $type = $listcx[$lap]["loaicx"];
+            if ($idcx != '') {
+                $g = camxuc($idcx, $type, $cookie);
+ if ($dem % 25 == 0){
+  $xu = getxu();
+}
+                // if ($g -> {'error'} -> {'code'} == 190) {
+                      // echo "\r";
+       // echo "                                                      \r";
+                        // echo $white."❥ ".$red."Cookie Die\n";
+                    // array_splice($khocookie,$xz,1);
+                        // $spam = 1; break;
+                    // }
+                    // if ($g -> {'error'} -> {'code'} == 368) {
+                      // echo "\r";
+       // echo "                                                      \r";
+                        // echo $white."❥ ".$red."\033[1;91m".$g-> {'error'}-> {'message'};
+                        // echo "\n";
+                        // array_splice($khocookie,$xz,1);
+                        // $spam = 1; break;
+                    // }
+
+                $nhancx = traluongcx($type,$idcx);
+                $s= $nhancx[("mess")];
+          if (strpos($s, 'Thành công') !== false) {
+                    $xu = $xu+400;
+                    $xujob = 400;
+                    $dem++;
+                    if ($type == 'WOW') {
+                        $type = '  WOW   ';
+                    } elseif ($type == 'SAD') {
+                        $type = '  SAD   ';
+                    } elseif ($type == 'ANGRY') {
+                        $type = '  ANGRY ';
+                    } elseif ($type == 'LOVE') {
+                        $type = '  LOVE  ';
+                    } elseif ($type == 'HAHA') {
+                        $type = '  HAHA  ';
+                    } elseif ($type == 'CARE') {
+                        $type = '  CARE  ';
+                    }
+                    hoanthanh($dem, $type, $idcx, $xujob, $xu);
+                    if ( $dem >= $dungtool ){
+	$dungtool = 999999;
+	$xu = getxu();
+    echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Chạy Tool Hoàn Thành Tổng Xu: ".$vang.$xu."\n";
+    exit;
+ }
+                    if($dem % $doinick == 0){
+                      if (count($khocookie)>1){
+                      $spam = 1; break;
+                      }
+                    }
+                    if($dem % $xxxxx == 0){
+                      delay2($delaybl);
+                    }
+                    
+                       
+                    delay($delaycx);
+                }
+            }}
+    
+        //likecmt
+        if ($listlikecmt != NULL) {
+            $idlikecmt = $listlikecmt[$lap]["idpost"];
+            $type = $listlikecmt[$lap]["loaicx"];
+            if ($idlikecmt != '') {
+                if ($type == 'LIKE'){
+                    like($access_token, $idlikecmt, $cookie);
+                }else{
+                    camxuc($idlikecmt, $type, $cookie);
+                }
+if ($dem % 25 == 0){
+  $xu = getxu();
+}
+                $nhanlcmt = traluonglikecmt($type, $idlikecmt);
+                $s= $nhanlcmt[("mess")];
+          if (strpos($s, 'Thành công') !== false) {
+                    $xu = $xu+600;
+                    $xujob = 600;
+                    $dem++;
+                    hoanthanh($dem, $type.' CMT', $idlikecmt, $xujob, $xu);
+                    if ( $dem >= $dungtool ){
+	$dungtool = 999999;
+	$xu = getxu();
+    echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Chạy Tool Hoàn Thành Tổng Xu: ".$vang.$xu."\n";
+    exit;
+ }
+                    if($dem % $doinick == 0){
+                      if (count($khocookie)>1){
+                      $spam = 1; break;
+                      }
+                    }
+                    if($dem % $xxxxx == 0){
+                      delay2($delaybl);
+                    }
+                    
+                      
+                    delay($delayrecmt);
+                } 
+            }
+        }
+  
+        //page
+        if ($listpage != NULL) {
+            $idpage = $listpage[$lap]["idpost"];
+            if ($idpage != '') {
+                $g = page($idpage, $cookie);
+if ($dem % 25 == 0){
+  $xu = getxu();
+}
+                 // if ($g -> {'error'} -> {'code'} == 190) {
+                    // echo "\r";
+       // echo "                                                      \r";
+                    // echo $white."❥ ".$red."Cookie Die\n";
+                    // array_splice($khocookie,$xz,1);
+                    // $spam = 1; break;
+                // }
+                // if ($g -> {'error'} -> {'code'} == 368) {
+                    // echo "\r";
+       // echo "                                                      \r";
+                    // echo $white."❥ ".$red."\033[1;91m".$g-> {'error'}-> {'message'};
+                    // echo "\n";
+                    // array_splice($khocookie,$xz,1);
+                    // $spam = 1; break;
+                // }
+                
+                $nhanpage = traluong('likepage',$idpage);
+                $s= $nhanpage[("mess")];
+          if (strpos($s, 'Thành công') !== false) {
+                    $xu = $xu+700;
+                    $xujob = 700;
+                    $dem++;
+                    hoanthanh($dem, '  PAGE  ', $idpage, $xujob, $xu);
+                    if ( $dem >= $dungtool ){
+	$dungtool = 999999;
+	$xu = getxu();
+    echo $white."❥ ".$green."Chạy Tool Hoàn Thành Tổng Xu: ".$vang.$xu."\n";
+    exit;
+ }
+                    if($dem % $doinick == 0){
+                      if (count($khocookie)>1){
+                      $spam = 1; break;
+                      }
+                    }
+                    if($dem % $xxxxx == 0){
+                      delay2($delaybl);
+                    }
+                    
+                       
+                    delay($delaypage);
+                }
+            }
+        }
+        //cmt
+        if ($listcmt != NULL) {
+            $idcmt = $listcmt[$lap]["idpost"];
+            $ms = json_decode($listcmt[$lap]["nd"]);
+            $msg = $ms[0];
+            if ($idcmt != '') {
+                $g = cmt($access_token, $idcmt, $cookie, $msg);
+if ($dem % 25 == 0){
+  $xu = getxu();
+}
+                                if ($g -> {'error'} -> {'code'} == 190) {
+            if(json_decode(get_request('https://graph.facebook.com/me/?access_token='.$access_token,$cookie))->{'id'}){}else{
+                  echo "\r";
+       echo "                                                      \r";
+                    echo $white."❥ ".$red."Cookie Die\n";
+                    array_splice($khocookie,$xz,1);
+                    $spam = 1; break;
+              }
+                }
+                if ($g -> {'error'} -> {'code'} == 368) {
+echo "\r";
+echo "                                                      \r";
+echo $do."[".$trang ."=.=".$do."] ".$trang."=> \033[1;91mĐợi 10s Để Check Block Ảo Nhé\r";
+sleep(10);
+              $testbl = cmt($access_token,'10103832396388711', $cookie,'CuongDepZai');
+              if ($testbl -> {'error'} -> {'code'} == 368) {
+                  echo "\r";
+       echo "                                                      \r";
+                    echo $do."[".$trang ."=.=".$do."] ".$trang."=> \033[1;91m".$g-> {'error'}-> {'message'};
+                    echo "\n";
+                    array_splice($khocookie,$xz,1);
+                    $spam = 1;
+                    break;
+                }}
+                $nhancmt = traluong('cmt',$idcmt);
+                $s= $nhancmt[("mess")];
+          if (strpos($s, 'Thành công') !== false) {
+                    $xu = $xu+600;
+                    $xujob = 600;
+                    $dem++;
+                    hoanthanh($dem, 'COMMENTS', $idcmt, $xujob, $xu);
+                    if ( $dem >= $dungtool ){
+	$dungtool = 999999;
+	$xu = getxu();
+    echo $do."[".$trang ."=.=".$do."] ".$trang."=> ".$green."Chạy Tool Hoàn Thành Tổng Xu: ".$vang.$xu."\n";
+    exit;
+ }
+                    if($dem % $doinick == 0){
+                      if (count($khocookie)>1){
+                      $spam = 1; break;
+                      }
+                    }
+                    if($dem % $xxxxx == 0){
+                      delay2($delaybl);
+                    }
+                    
+                        
+                    delay($delaycmt);
+                }
+            }}
+     
+       
+    
+    }
+}}}
+
+function follow($idtest, $cookie) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://mbasic.facebook.com/'.$idtest.'?_rdr');
+    $head[] = "Connection: keep-alive";
+    $head[] = "Keep-Alive: 300";
+	$head[] = "upgrade-insecure-requests: 1";
+    // $head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+    // $head[] = "Accept-Language: en-us,en;q=0.5";
+    // $head[] = "Accept-encoding: gzip, deflate, br";
+    // $head[] = "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+	$head[] = "sec-ch-ua-mobile: ?0";
+    $head[] = "sec-fetch-user: ?1";
+    $head[] = "sec-fetch-site: none";
+    $head[] = "sec-fetch-dest: document";
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36');
+    //curl_setopt($ch, CURLOPT_ENCODING, '');
+    curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); 
+	curl_setopt($ch, CURLOPT_REFERER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    //curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+    $access = curl_exec($ch);
+	//return $access;
+	$url1 = curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+    if(strpos($access,'/a/subscribe.php?') !== false){
+	$haha = explode('<a href="', $access);
+	//$haha2 = null;
+	//echo 1;
+    for($v = 0; $v<count($haha); $v++){
+	if(strpos($haha[$v],'/a/subscribe.php?') !==false){
+		$haha2 = explode('" class=', $haha[$v])[0];
+		break;
+	}
+	}
+	//if()
+	$link2 = html_entity_decode($haha2);
+    // echo $url1;
+	curl_setopt($ch, CURLOPT_URL, 'https://mbasic.facebook.com'.$link2.'&_rdr');
+	curl_setopt($ch, CURLOPT_REFERER, $url1);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    $fl = curl_exec($ch);
+	//echo curl_getinfo($ch, CURLINFO_EFFECTIVE_URL);
+	curl_close($ch);
+	//return $fl;
+	}else{
+		curl_close($ch);
+		return 'id '.$idtest.' loi';
+		//return $access;
+	}
+    
+}
+
+
+function share($access_token,$id, $cookie) {
+ $ch=curl_init();
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_URL, 'https://graph.facebook.com/v2.0/me/feed');
+curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36');
+$data = array(
+'privacy' => '{"value":"EVERYONE"}',
+'message' => '',
+'link' => 'https://mbasic.facebook.com/'.$id.'',
+'access_token' => $access_token
+);
+curl_setopt($ch, CURLOPT_POST,count($data));
+curl_setopt($ch, CURLOPT_POSTFIELDS,$data);
+curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+$a = json_decode(curl_exec($ch), true);                                    
+curl_close($ch);
+   return $a;
+}
+function like($access_token, $id, $cookie) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://graph.facebook.com/'.$id.'/likes');
+    $head[] = "Connection: keep-alive";
+    $head[] = "Keep-Alive: 300";
+    $head[] = "authority: m.facebook.com";
+    $head[] = "ccept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+    $head[] = "accept-language: vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5";
+    $head[] = "cache-control: max-age=0";
+    $head[] = "upgrade-insecure-requests: 1";
+    $head[] = "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+    $head[] = "sec-fetch-site: none";
+    $head[] = "sec-fetch-mode: navigate";
+    $head[] = "sec-fetch-user: ?1";
+    $head[] = "sec-fetch-dest: document";
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36');
+    curl_setopt($ch, CURLOPT_ENCODING, '');
+    curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+    $data = array('access_token' => $access_token);
+    curl_setopt($ch, CURLOPT_POST, count($data));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    $access = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($access);
+
+}
+function cmt($access_token, $idcmt, $cookie, $msg) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://graph.facebook.com/'.$idcmt.'/comments');
+    $head[] = "Connection: keep-alive";
+    $head[] = "Keep-Alive: 300";
+    $head[] = "authority: m.facebook.com";
+    $head[] = "ccept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+    $head[] = "accept-language: vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5";
+    $head[] = "cache-control: max-age=0";
+    $head[] = "upgrade-insecure-requests: 1";
+    $head[] = "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+    $head[] = "sec-fetch-site: none";
+    $head[] = "sec-fetch-mode: navigate";
+    $head[] = "sec-fetch-user: ?1";
+    $head[] = "sec-fetch-dest: document";
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36');
+    curl_setopt($ch, CURLOPT_ENCODING, '');
+    curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+    $data = array('message' => $msg, 'access_token' => $access_token);
+    curl_setopt($ch, CURLOPT_POST, count($data));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    $access = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($access);
+}
+function hoanthanh($dem, $type, $id, $xujob, $xu) {
+  $xu = getxu();
+  $t = date('H:i:s');
+  $idk = substr($id, 0,15);
+  $rd = rand(1, 7);
+  echo "\r";
+      echo "                                              \r";
+    $a = "\033[1;33m[".$dem."\033[1;33m] \033[1;31m❥ \033[1;36m$t\033[1;31m ❥\033[1;3".$rd."m$type\033[1;31m❥ \033[1;34mID ĐÃ ẨN \033[1;31m❥ \033[1;32m+$xujob \033[1;31m❥ \033[1;93m".$xu." Xu\n";
+    $len = strlen($a);
+    for ($x = 0; $x < $len; $x++) {
+        echo $a[$x];
     }
 }
-function cauhinh($idtik){
-        while (true){
-        $data = "iddat[]=".$idtik."&loai=yt";
-        $head = array(
-            "Host: tuongtaccheo.com",
-            "content-length: ".strlen($data),
-            "accept: */*",
-            "origin: https://tuongtaccheo.com",
-            "x-requested-with: XMLHttpRequest",
-            "user-agent: Mozilla/5.0 (Linux; Android 10; Redmi Note 8 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.152 Mobile Safari/537.36",
-            "content-type: application/x-www-form-urlencoded; charset=UTF-8",
-            "referer: https://tuongtaccheo.com/cauhinh/index.php"
-        );
-        $ch = curl_init();
-        curl_setopt_array($ch, array(
-                CURLOPT_URL => 'https://tuongtaccheo.com/cauhinh/datnick.php',
-                CURLOPT_FOLLOWLOCATION => TRUE,
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_POST => 1,
-                CURLOPT_POSTFIELDS => $data,
-                CURLOPT_SSL_VERIFYPEER => 0,
-                CURLOPT_COOKIEFILE => $_SESSION['user'].".txt",
-                CURLOPT_HTTPHEADER => $head,
-                CURLOPT_ENCODING => TRUE
-        ));
-        $access = curl_exec($ch);
-        if(strpos($access, 'Chưa đăng nhập !!!') !== false){
-            $login = logintoken();
-            if($login == true){
-                echo $luc." COOKIE TUONGTACCHEO DIE, ĐĂNG NHẬP LẠI THÀNH CÔNG \r"; continue;
-            } else {
-                echo $luc." COOKIE TUONGTACCHEO DIE, ĐĂNG NHẬP LẠI THẤT BẠI \n"; die;
-            }
-            } else {
-            return $access;
-            }
-    }
+function delay($delay) {
+    $time = $delay; 
+    for ( $x = $time; $x--; $x ) {
+    echo "                                                      \r";
+       echo "\033[1;32mAn Orin <~> Chờ\033[1;93m $x\033[1;91m | ";
+usleep(133333);
+echo "\033[1;31m -  ";
+usleep(133333);
+echo "\033[1;32m -  ";
+usleep(133333);
+echo "\033[1;33m -  ";
+usleep(133333);
+echo "\033[1;34m -  ";
+usleep(133333);
+echo "\033[1;35m -  ";
+usleep(133333);
+        echo "\r \033[1;31m> Đang tìm nhiệm vụ.. Loading..\033[1;36m ❥\033[1;32m ❥\033[1;33m ❥ 😆\033[0m\r";
+}}
+function delay2($delaybl){
+  $green="\e[1;32m";
+  $yellow="\e[1;33m";
+  for($j = $delaybl;$j> 0;$j--){
+    echo "\r";
+    echo "                                                      \r";
+    echo $green."Đang Chờ Delay Tránh Block$yellow $j Giây";
+             sleep(1);
+      
+           }
+  echo "\r";
+  echo "                                                      \r";
 }
-function get_yt($type){
-    $url  = "https://tuongtaccheo.com/youtube/kiemtien".$type."/getpost.php";
+function getcookiettc($TTC_Access_token,$useragent){
+  $ch=curl_init();
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_URL, 'https://tuongtaccheo.com/logintoken.php');
+curl_setopt($ch, CURLOPT_COOKIEJAR, "ttc.txt");
+curl_setopt($ch, CURLOPT_USERAGENT,$useragent);
+$login =array('access_token' => $TTC_Access_token);
+curl_setopt($ch, CURLOPT_POST,count($login));
+curl_setopt($ch, CURLOPT_POSTFIELDS,$login);
+curl_setopt($ch, CURLOPT_COOKIEFILE, "ttc.txt");
+$source=curl_exec($ch);
+curl_close($ch);
+return $source;
+}
+function datnick($idfb,$useragent){
+$url = 'https://tuongtaccheo.com/cauhinh/datnick.php';
+$header = array(
+  "Host: tuongtaccheo.com",
+  "accept: */*",
+  "x-requested-with: XMLHttpRequest",
+  "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
+  "content-type: application/x-www-form-urlencoded; charset=UTF-8",
+  "origin: https://tuongtaccheo.com",
+  "sec-fetch-site: same-origin",
+  "sec-fetch-mode: cors",
+  "sec-fetch-dest: empty",
+  "referer: https://tuongtaccheo.com/cauhinh/",
+);
+  $data = 'iddat%5B%5D='.$idfb."&loai=fb";
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_PORT, "443");
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_ENCODING, "");
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+  curl_setopt($ch, CURLOPT_COOKIEFILE, "ttc.txt");
+  curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+  $h = curl_exec($ch);
+  curl_close($ch);
+  return $h;
+}
+function getlike($useragent){
+ $ch=curl_init();
+ curl_setopt($ch, CURLOPT_URL,'https://tuongtaccheo.com/kiemtien/getpost.php');
+ $head[]='Host: tuongtaccheo.com';
+ $head[]='accept: application/json, text/javascript, *'.'/'.'*; q=0.01';
+ $head[]='x-requested-with: XMLHttpRequest';
+ $head[]='referer: https://tuongtaccheo.com/kiemtien/';
+ curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
+ curl_setopt($ch,CURLOPT_FOLLOWLOCATION, TRUE);
+ curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+ curl_setopt($ch,CURLOPT_POST,1);
+ curl_setopt($ch,CURLOPT_HTTPGET, true);
+ curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, 0);
+ curl_setopt($ch,CURLOPT_HTTPHEADER, $head);
+ curl_setopt($ch,CURLOPT_ENCODING, TRUE);
+ curl_setopt($ch,CURLOPT_COOKIEFILE, "ttc.txt");
+ return json_decode(curl_exec($ch),true);
+ curl_close($ch);
+}
+function nhantienlike($id,$useragent){
+  $ch= curl_init();
+  $data= ('id=').$id;
+  curl_setopt($ch, CURLOPT_URL, 'https://tuongtaccheo.com/kiemtien/nhantien.php');
+  $head[]='Host: tuongtaccheo.com';
+  $head[]='content-length: '.strlen($data);
+  $head[]='x-requested-with: XMLHttpRequest';
+  $head[]='content-type: application/x-www-form-urlencoded; charset=UTF-8';
+  $head[]='origin: https://tuongtaccheo.com';
+  $head[]='referer: https://tuongtaccheo.com/kiemtien/';
+  $head[]='cookie: TawkConnectionTime=0';
+  curl_setopt($ch,CURLOPT_USERAGENT, $useragent);
+  curl_setopt($ch,CURLOPT_FOLLOWLOCATION,TRUE);
+  curl_setopt($ch,CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch,CURLOPT_POST, 1);
+  curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+  curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
+  curl_setopt($ch,CURLOPT_HTTPHEADER, $head);
+  curl_setopt($ch,CURLOPT_ENCODING, TRUE);
+  curl_setopt($ch,CURLOPT_COOKIEFILE,"ttc.txt");
+  $xu= json_decode(curl_exec($ch), true);
+  curl_close($ch);
+  return $xu;
+}
+function getxu(){
+  $url = "https://tuongtaccheo.com/home.php";
+  $curl = curl_init();
+  curl_setopt_array($curl, array(
+  CURLOPT_PORT => "443",
+  CURLOPT_URL => "$url",
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => "",
+  CURLOPT_SSL_VERIFYPEER => true,
+  CURLOPT_CUSTOMREQUEST => "GET",
+  CURLOPT_COOKIEFILE => "ttc.txt"
+  ));
+  $data = curl_exec($curl);
+  curl_close($curl);
+  preg_match('#id="soduchinh">(.+?)<#is', $data, $sd);
+  $xu = $sd["1"];
+  return $xu; 
+}
+function getnv($loai,$useragent){
+ $ch=curl_init();
+ curl_setopt($ch, CURLOPT_URL,'https://tuongtaccheo.com/kiemtien/'.$loai.'cheo/getpost.php');
+ $head[]='Host: tuongtaccheo.com';
+ $head[]='accept: application/json, text/javascript, *'.'/'.'*; q=0.01';
+ $head[]='x-requested-with: XMLHttpRequest';
+ $head[]='user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36';
+ $head[]='referer: https://tuongtaccheo.com/kiemtien/'.$loai.'cheo';
+ curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
+ curl_setopt($ch,CURLOPT_FOLLOWLOCATION, TRUE);
+ curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+ curl_setopt($ch,CURLOPT_POST,1);
+ curl_setopt($ch,CURLOPT_HTTPGET, true);
+ curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, 0);
+ curl_setopt($ch,CURLOPT_HTTPHEADER, $head);
+ curl_setopt($ch,CURLOPT_ENCODING, TRUE);
+ curl_setopt($ch,CURLOPT_COOKIEFILE, "ttc.txt");
+ return json_decode(curl_exec($ch),true);
+ curl_close($ch);
+}
+function getnvcxcmt($useragent){
+ $ch=curl_init();
+ curl_setopt($ch, CURLOPT_URL,'https://tuongtaccheo.com/kiemtien/camxuccheobinhluan/getpost.php');
+ $head[]='Host: tuongtaccheo.com';
+ $head[]='accept: application/json, text/javascript, *'.'/'.'*; q=0.01';
+ $head[]='x-requested-with: XMLHttpRequest';
+ $head[]='user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36';
+ $head[]='referer: https://tuongtaccheo.com/kiemtien/camxuccheobinhluan';
+ curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
+ curl_setopt($ch,CURLOPT_FOLLOWLOCATION, TRUE);
+ curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+ curl_setopt($ch,CURLOPT_POST,1);
+ curl_setopt($ch,CURLOPT_HTTPGET, true);
+ curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, 0);
+ curl_setopt($ch,CURLOPT_HTTPHEADER, $head);
+ curl_setopt($ch,CURLOPT_ENCODING, TRUE);
+ curl_setopt($ch,CURLOPT_COOKIEFILE, "ttc.txt");
+ return json_decode(curl_exec($ch),true);
+ curl_close($ch);
+}
+function traluong($loai,$id)
+{
+    $url  = "https://tuongtaccheo.com/kiemtien/$loai"."cheo/nhantien.php";
+    $data= ('id=').$id;
     $head = array(
         "Host: tuongtaccheo.com",
-        "accept: application/json, text/javascript, *" . "/" . "*; q=0.01",
+        "content-length: " . strlen($data),
         "x-requested-with: XMLHttpRequest",
-        "user-agent: Mozilla/5.0 (Linux; Android 10; Mi 9T Pro) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/12.1 Chrome/79.0.3945.136 Mobile Safari/537.36",
-        "referer: https://tuongtaccheo.com/tiktok/kiemtien/"
+        "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
+        "content-type: application/x-www-form-urlencoded; charset=UTF-8",
+        "origin: https://tuongtaccheo.com",
+        "referer: https://tuongtaccheo.com/kiemtien/$loai"."cheo/"
     );
     $ch   = curl_init();
     curl_setopt_array($ch, array(
@@ -328,292 +1108,229 @@ function get_yt($type){
         CURLOPT_FOLLOWLOCATION => TRUE,
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_POST => 1,
-        CURLOPT_HTTPGET => true,
+        CURLOPT_POSTFIELDS => $data,
         CURLOPT_SSL_VERIFYPEER => 0,
-        CURLOPT_COOKIEFILE => $_SESSION['user'].".txt",
+        CURLOPT_COOKIEFILE => "ttc.txt",
         CURLOPT_HTTPHEADER => $head,
         CURLOPT_ENCODING => TRUE
     ));
-    $data = json_decode(curl_exec($ch), true);
-    return $data;
+    $a = json_decode(curl_exec($ch), true);
+    return $a;
 }
-function nhantien($id,$type){
-    while (true){
-        $url  = "https://tuongtaccheo.com/youtube/kiemtien".$type."/nhantien.php";
-        $data = "id=".$id;
-        $head = array(
-            "Host: tuongtaccheo.com",
-            "content-length: " . strlen($data),
-            "x-requested-with: XMLHttpRequest",
-            "user-agent: Mozilla/5.0 (Linux; Android 10; Mi 9T Pro) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/12.1 Chrome/79.0.3945.136 Mobile Safari/537.36",
-            "content-type: application/x-www-form-urlencoded; charset=UTF-8",
-            "origin: https://tuongtaccheo.com",
-            "referer: https://tuongtaccheo.com/tiktok/kiemtien/"
-        );
-        $ch   = curl_init();
-        curl_setopt_array($ch, array(
-            CURLOPT_URL => $url,
-            CURLOPT_FOLLOWLOCATION => TRUE,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_POST => 1,
-            CURLOPT_POSTFIELDS => $data,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_COOKIEFILE => $_SESSION['user'].".txt",
-            CURLOPT_HTTPHEADER => $head,
-            CURLOPT_ENCODING => TRUE
-        ));
-        $data = curl_exec($ch);
-        if($data == '0'){
-            $login = logintoken();
-            if($login == true){
-                    echo "\033[1;32m COOKIE TUONGTACCHEO DIE, ĐĂNG NHẬP LẠI THÀNH CÔNG \r"; continue;
-            } else {
-                    echo "\033[1;31m COOKIE TUONGTACCHEO DIE, ĐĂNG NHẬP LẠI THẤT BẠI \n"; die;
-                    }
-        } else {
-            return json_decode($data, true);
-        }
-    }
+
+// function gettoken($cookie,$useragent){
+// $ch = curl_init();
+  // curl_setopt($ch, CURLOPT_URL, 'https://mbasic.facebook.com/me');
+// $head[] = "Connection: keep-alive";
+// $head[] = "Keep-Alive: 300";
+// $head[] = "authority: m.facebook.com";
+// $head[] = "ccept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+// $head[] = "accept-language: vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5";
+// $head[] = "cache-control: max-age=0";
+// $head[] = "upgrade-insecure-requests: 1";
+// $head[] = "accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+// $head[] = "sec-fetch-site: none";
+// $head[] = "sec-fetch-mode: navigate";
+// $head[] = "sec-fetch-user: ?1";
+// $head[] = "sec-fetch-dest: document";
+// curl_setopt($ch, CURLOPT_USERAGENT,$useragent );
+// curl_setopt($ch, CURLOPT_ENCODING, '');
+// curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+// curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+// curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+// curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+// curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+// curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+// curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+// $access = curl_exec($ch);
+// curl_close($ch);
+// $uid = ;
+// $r = '/profile_id=(\d*)/';
+// if(preg_match($r,$s,$matches)){
+// $uid = $matches[1];
+// return $uid;
+// }else{
+// return false;
+// }
+// }
+function gettoken($cookie,$useragent){
+$head= array("Connection: keep-alive","Keep-Alive: 300","authority: business.facebook.com","ccept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7","accept-language: vi-VN,vi;q=0.9,fr-FR;q=0.8,fr;q=0.7,en-US;q=0.6,en;q=0.5","cache-control: max-age=0","upgrade-insecure-requests: 1","accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9","sec-fetch-site: none","sec-fetch-mode: navigate","sec-fetch-user: ?1","sec-fetch-dest: document");
+$ch=curl_init();
+	curl_setopt_array($ch , array(
+		CURLOPT_URL => "https://business.facebook.com/content_management",
+		CURLOPT_USERAGENT => $useragent,
+		CURLOPT_COOKIE => $cookie,
+		CURLOPT_HTTPHEADER => $head,
+		CURLOPT_RETURNTRANSFER => 1,
+		CURLOPT_SSL_VERIFYPEER => FALSE,
+		CURLOPT_TIMEOUT => 60,
+		CURLOPT_CONNECTTIMEOUT => 60,
+		CURLOPT_FOLLOWLOCATION => TRUE
+	));
+	$access = curl_exec($ch);
+	curl_close($ch);
+$access_token = 'EAAG'.explode('","', explode('EAAG', $access)[1])[0];
+if(strlen($access_token) > 5){
+	return $access_token;
+} else {
+	return 'die';
 }
-function coin($tool1){
-    while (true){
-            $ch = curl_init();
-        curl_setopt_array($ch, array(
-                CURLOPT_URL => 'https://tuongtaccheo.com/home.php',
-                CURLOPT_PORT => "443",
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => "",
-                CURLOPT_SSL_VERIFYPEER => true,
-                CURLOPT_CUSTOMREQUEST => "GET",
-                CURLOPT_COOKIEFILE => $_SESSION['user'].".txt",
-        ));
-        $access = curl_exec($ch);
-        curl_close($ch);
-        $xu = explode('"soduchinh">', explode('</strong>', $access)[0])[1];
-        if (strpos ($access, "Chào mừng") == false){
-                $login = logintoken();
-            if($login == true){
-                echo "\033[1;32m COOKIE TUONGTACCHEO DIE, ĐĂNG NHẬP LẠI THÀNH CÔNG \r"; continue;
-            } else {
-                echo "\033[1;31m COOKIE TUONGTACCHEO DIE, ĐĂNG NHẬP LẠI THẤT BẠI \n"; die;
-            }
-        } else if ($xu !== ''){
-            return $xu;
-        } else {
-            echo "\033[1;31m Lỗi Không Xác Định                  \r";
-        }
-    }
 }
-function REQUEST($url) {
-        $ch = curl_init();
-        curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
-                CURLOPT_RETURNTRANSFER => TRUE,
-                CURLOPT_USERAGENT => $_SESSION['useragent'],
-                CURLOPT_FOLLOWLOCATION => TRUE,
-                CURLOPT_ENCODING => '',
-                CURLOPT_AUTOREFERER => TRUE,
-                CURLOPT_CONNECTTIMEOUT => 15,
-                CURLOPT_TIMEOUT => 15,
-                CURLOPT_MAXREDIRS => 5,
-                CURLOPT_SSL_VERIFYPEER => 0,
-                CURLOPT_HEADER => FALSE
-        ));
-    $access = curl_exec($ch);
-    return json_decode($access);
-}
-function delay ($delay){
-        for($tt = $delay ;$tt>= 1;$tt--){
-        echo "\r\033[1;33m   TTC YOUTUBE \033[1;31m ~>       \033[1;32m LO      \033[1;31m | $tt | "; usleep($_SESSION['delay']);
-        echo "\r\033[1;31m   TTC YOUTUBE \033[0;33m   ~>     \033[0;37m LOA     \033[0;31m | $tt | "; usleep($_SESSION['delay']);
-        echo "\r\033[1;32m   TTC YOUTUBE \033[0;33m     ~>   \033[0;37m LOAD    \033[0;31m | $tt | "; usleep($_SESSION['delay']);
-        echo "\r\033[1;34m   TTC YOUTUBE \033[0;33m       ~> \033[0;37m LOADI   \033[0;31m | $tt | "; usleep($_SESSION['delay']);
-        echo "\r\033[1;35m   TTC YOUTUBE \033[0;33m        ~>\033[0;37m LOADIN  \033[0;31m | $tt | "; usleep($_SESSION['delay']);
-        echo "\r\033[1;35m   TTC YOUTUBE \033[0;33m        ~>\033[0;37m LOADING \033[0;31m | $tt | "; usleep($_SESSION['delay']);
-        echo "\r\033[1;35m   TTC YOUTUBE \033[0;33m        ~>\033[0;37m LOADING.\033[0;31m | $tt | ";usleep($_SESSION['delay']);}
-        echo "\r\e[1;95m    🍉An Orin🍉      TTC Youtube                 \r";
-    }
-function hienthi($dem, $loai, $id, $xujob, $xu){
-    date_default_timezone_set( 'Asia/Ho_Chi_Minh' );
-        $kl = "\033[1;34m[\033[1;33m".$dem."\033[1;34m]\033[1;91m ✔ \033[1;36m".date("H:i:s")."\033[1;31m ✔ \033[1;".rand(31,37)."m".$loai."\033[1;31m ✔ \033[1;37m".$id."\033[1;31m ✔ \033[1;32m$xujob \033[1;31m✔\033[1;32m $xu \n";
-    for($i = 0; $i < strlen($kl); $i++){echo $kl[$i];usleep(500);}
-}
-function loadyt() {
-    echo"\033[1;37m══════════════════════════════════════════════════════════════\n";
-}
-function sub_yt($url, $cookie, $authorization)
-{
-    $url = str_replace("www","m",$url);
-    $url = str_replace("https://youtube","https://m.youtube",$url);
-    $url = str_replace("http:","https:",$url);
-    $head_g = ["user-agent:Mozilla/5.0 (Linux; Android 9; RMX1811) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Mobile Safari/537.36", "cookie: " . $cookie];
+function camxuc($idcx, $type, $cookie) {
     $ch = curl_init();
-    curl_setopt_array($ch, array(
-        CURLOPT_URL => "https://m.youtube.com",
-        CURLOPT_FOLLOWLOCATION => false,
-        CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_POST => 1,
-        CURLOPT_HTTPGET => true,
-        CURLOPT_SSL_VERIFYPEER => 0,
-        CURLOPT_HTTPHEADER => $head_g,
-        CURLOPT_ENCODING => true
-    ));
-    $dlg = curl_exec($ch);
+    curl_setopt($ch, CURLOPT_URL, 'https://mbasic.facebook.com/reactions/picker/?is_permalink=1&ft_id='.$idcx);
+    $head[] = "Connection: keep-alive";
+    $head[] = "Keep-Alive: 300";
+    $head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+    $head[] = "Accept-Language: en-us,en;q=0.5";
+	$head[] = "sec-ch-ua-mobile: ?0";
+    $head[] = "sec-fetch-user: ?1";
+    $head[] = "sec-fetch-site: none";
+    $head[] = "sec-fetch-dest: document";
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36');
+    curl_setopt($ch, CURLOPT_ENCODING, '');
+    curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect
+    // :'));
+    $cx = curl_exec($ch);
+    $haha = explode('<a href="', $cx);
+    if ($type == 'LIKE') {
+        $haha2 = explode('" style="display:block"', $haha[1])[0];
+    } else if ($type == 'LOVE') {
+        $haha2 = explode('" style="display:block"', $haha[2])[0];
+    } else if ($type == 'WOW') {
+        $haha2 = explode('" style="display:block"', $haha[5])[0];
+    } else if ($type == 'CARE') {
+        $haha2 = explode('" style="display:block"', $haha[3])[0];
+    } else if ($type == 'HAHA') {
+        $haha2 = explode('" style="display:block"', $haha[4])[0];
+    } else if ($type == 'SAD') {
+        $haha2 = explode('" style="display:block"', $haha[6])[0];
+    } else {
+        $haha2 = explode('" style="display:block"', $haha[7])[0];
+    }
+    $link2 = html_entity_decode($haha2);
+    curl_setopt($ch, CURLOPT_URL, 'https://mbasic.facebook.com'.$link2);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_exec($ch);
     curl_close($ch);
-    $authuser = explode('"', explode('authuser\u003d', $dlg) [1]) [0];
-    $ch = curl_init();
+}
+function traluongcx($type,$id)
+{
+    $url  = "https://tuongtaccheo.com/kiemtien/camxuccheo/nhantien.php";
+    $data= 'id='.$id.'&loaicx='.$type;
+    $head = array(
+        "Host: tuongtaccheo.com",
+        "content-length: " . strlen($data),
+        "x-requested-with: XMLHttpRequest",
+        "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
+        "content-type: application/x-www-form-urlencoded; charset=UTF-8",
+        "origin: https://tuongtaccheo.com",
+        "referer: https://tuongtaccheo.com/kiemtien/camxuccheo/"
+    );
+    $ch   = curl_init();
     curl_setopt_array($ch, array(
         CURLOPT_URL => $url,
-        CURLOPT_FOLLOWLOCATION => false,
+        CURLOPT_FOLLOWLOCATION => TRUE,
         CURLOPT_RETURNTRANSFER => 1,
         CURLOPT_POST => 1,
-        CURLOPT_HTTPGET => true,
+        CURLOPT_POSTFIELDS => $data,
         CURLOPT_SSL_VERIFYPEER => 0,
-        CURLOPT_HTTPHEADER => $head_g,
-        CURLOPT_ENCODING => true
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_COOKIEFILE => "ttc.txt",
+        CURLOPT_HTTPHEADER => $head,
+        CURLOPT_ENCODING => TRUE
     ));
-    $tim_id  = curl_exec($ch);
-    curl_close($ch);
-    $id_cn = explode('"', explode('channelId" content="', $tim_id) [1]) [0];
-    if ($id_cn == false)
-    {
-        $id_cn = explode('"', explode('"channelId":"', $tim_id) [1]) [0];
-    }
-    $link = 'https://m.youtube.com/channel/' . $id_cn;
-    if ($id_cn != false)
-    {
-        //echo ("Link Channel: " . $link . "\n");
-        $ch = curl_init();
-        curl_setopt_array($ch, array(
-            CURLOPT_URL => $link,
-            CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_POST => 1,
-            CURLOPT_HTTPGET => true,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_HTTPHEADER => $head_g,
-            CURLOPT_ENCODING => true
-        ));
-        $dlg = curl_exec($ch);
-        curl_close($ch);
-        $context = explode('}},', explode('"INNERTUBE_CONTEXT":', $dlg) [1]) [0];
-        $pageid = explode('"', explode('"DELEGATED_SESSION_ID":"', $dlg) [1]) [0];
-        $url = 'https://m.youtube.com/youtubei/v1/subscription/subscribe?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8&prettyPrint=false';
-        if ($pageid != false)
-        {
-            $head_p = ["origin:https://m.youtube.com", "authorization:$authorization", "x-goog-authuser:$authuser", "content-type:application/json", "x-goog-pageid:$pageid", "accept:*/*", "cookie: " . $cookie];
-        }
-        else
-        {
-            $head_p = ["origin:https://m.youtube.com", "authorization:$authorization", "x-goog-authuser:$authuser", "content-type:application/json", "accept:*/*", "cookie: " . $cookie];
-        }
-        $data = '{
-  "context": ' . $context . '},
-    "adSignalsInfo": {
-      "params": [
-        {
-          "key": "dt",
-          "value": "1659697776258"
-        },
-        {
-          "key": "flash",
-          "value": "0"
-        },
-        {
-          "key": "frm",
-          "value": "0"
-        },
-        {
-          "key": "u_tz",
-          "value": "420"
-        },
-        {
-          "key": "u_his",
-          "value": "5"
-        },
-        {
-          "key": "u_h",
-          "value": "895"
-        },
-        {
-          "key": "u_w",
-          "value": "424"
-        },
-        {
-          "key": "u_ah",
-          "value": "895"
-        },
-        {
-          "key": "u_aw",
-          "value": "424"
-        },
-        {
-          "key": "u_cd",
-          "value": "24"
-        },
-        {
-          "key": "bc",
-          "value": "31"
-        },
-        {
-          "key": "bih",
-          "value": "759"
-        },
-        {
-          "key": "biw",
-          "value": "424"
-        },
-        {
-          "key": "brdim",
-          "value": "0,0,0,0,424,0,424,759,424,759"
-        },
-        {
-          "key": "vis",
-          "value": "1"
-        },
-        {
-          "key": "wgl",
-          "value": "true"
-        },
-        {
-          "key": "ca_type",
-          "value": "image"
-        }
-      ]
-    }
-  },
-  "channelIds": [
-    "' . $id_cn . '"
-  ],
-  "params": "EgIIAhgA"
-}';
-        $ch = curl_init();
-        curl_setopt_array($ch, array(
-            CURLOPT_URL => $url,
-            CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_POST => 1,
-            CURLOPT_HTTPGET => true,
-            CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => $data,
-            CURLOPT_HTTPHEADER => $head_p,
-            CURLOPT_ENCODING => true
-        ));
-        $BA = curl_exec($ch);
-        $kq = json_decode($BA, true);
-        if (strpos(json_encode($kq, true) , "\u0110\u00e3 \u0111\u0103ng k\u00fd k\u00eanh") == true)
-        {
-          return "1";
-        }
-        else
-        {
-          return "0";
-        }
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    $a = json_decode(curl_exec($ch), true);
+    return $a;
 }
+function traluonglikecmt($type,$id)
+{
+    $url  = "https://tuongtaccheo.com/kiemtien/camxuccheobinhluan/nhantien.php";
+    $data= 'id='.$id.'&loaicx='.$type;
+    $head = array(
+        "Host: tuongtaccheo.com",
+        "content-length: " . strlen($data),
+        "x-requested-with: XMLHttpRequest",
+        "user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
+        "content-type: application/x-www-form-urlencoded; charset=UTF-8",
+        "origin: https://tuongtaccheo.com",
+        "referer: https://tuongtaccheo.com/kiemtien/camxuccheobinhluan/"
+    );
+    $ch   = curl_init();
+    curl_setopt_array($ch, array(
+        CURLOPT_URL => $url,
+        CURLOPT_FOLLOWLOCATION => TRUE,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_POST => 1,
+        CURLOPT_POSTFIELDS => $data,
+        CURLOPT_SSL_VERIFYPEER => 0,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        CURLOPT_COOKIEFILE => "ttc.txt",
+        CURLOPT_HTTPHEADER => $head,
+        CURLOPT_ENCODING => TRUE
+    ));
+    $a = json_decode(curl_exec($ch), true);
+    return $a;
+}
+function page($idpage, $cookie) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://mbasic.facebook.com/'.$idpage.'?_rdr');
+    $head[] = "Connection: keep-alive";
+    $head[] = "Keep-Alive: 300";
+	$head[] = "upgrade-insecure-requests: 1";
+    // $head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+    // $head[] = "Accept-Language: en-us,en;q=0.5";
+    // $head[] = "Accept-encoding: gzip, deflate, br";
+    // $head[] = "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+	$head[] = "sec-ch-ua-mobile: ?0";
+    $head[] = "sec-fetch-user: ?1";
+    $head[] = "sec-fetch-site: none";
+    $head[] = "sec-fetch-dest: document";
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36');
+    curl_setopt($ch, CURLOPT_ENCODING, '');
+    curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    $page = curl_exec($ch);
+    if (explode('&amp;refid=', explode('pageSuggestionsOnLiking=1&amp;gfid=', $page)[1])[0]) {
+        $get = explode('&amp;refid=', explode('pageSuggestionsOnLiking=1&amp;gfid=', $page)[1])[0];
+        $link = 'https://mbasic.facebook.com/a/profile.php?fan&id='.$idpage.'&origin=page_profile&pageSuggestionsOnLiking=1&gfid='.$get.'&refid=17';
+        curl_setopt($ch, CURLOPT_URL, $link);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_exec($ch);
+    }
+    curl_close($ch);
+
+}
+function get_request($url,$cc = null){
+   $curl = curl_init();
+   $head[] = "sec-ch-ua-mobile: ?0";
+    $head[] = "sec-fetch-user: ?1";
+    $head[] = "sec-fetch-site: none";
+    $head[] = "sec-fetch-dest: document";
+	$head[] = "upgrade-insecure-requests: 1";
+	curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
+   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+   curl_setopt($curl, CURLOPT_URL, $url);
+   curl_setopt($curl, CURLOPT_COOKIE, $cc);
+   curl_setopt($curl, CURLOPT_REFERER, 'https://www.facebook.com/');
+   curl_setopt($curl,CURLOPT_USERAGENT,'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36');
+   $ch = curl_exec($curl);
+   curl_close($curl);
+   return $ch;
+   }
+?>
