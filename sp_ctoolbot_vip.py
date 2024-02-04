@@ -8,6 +8,8 @@ from telegram import Bot
 import datetime
 import random
 from pytube import YouTube
+from keep_alive import keep_alive
+keep_alive()
 os.system('clear')
 print('BOT ONLINE BY AN ORIN & VIP !')
 bot_token = '6075354022:AAFo7hfjjb7KEYhGO6ovtwD2TuQ0nzB6sF4' 
